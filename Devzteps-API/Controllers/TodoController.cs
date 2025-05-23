@@ -12,6 +12,7 @@ namespace Devzteps_API.Controllers
     {
         private readonly ITodoService _todoService;
         private readonly IMapper _mapper;
+        private static int _runningRequests = 0;
 
         public TodoController(ITodoService todoService, IMapper mapper)
         {
@@ -45,6 +46,36 @@ namespace Devzteps_API.Controllers
             var resultDto = _mapper.Map<TodoReadItemDTO>(created);
 
             return CreatedAtAction(nameof(Get), new { id = resultDto.Id }, resultDto);
+        }
+
+        // ------------------------------------------------------- Endpoints para Threads e Paralelismo -------------------------
+
+        [HttpGet("sync-task")]
+        public IActionResult SyncTask()
+        {
+            Interlocked.Increment(ref _runningRequests);
+            Console.WriteLine($"[SYNC TASK] Requisições simultâneas em execução: {_runningRequests} - Thread {Thread.CurrentThread.ManagedThreadId}");
+
+            Thread.Sleep(3000);
+
+            Console.WriteLine($"[SYNC TASK] Finalizando requisição - Thread {Thread.CurrentThread.ManagedThreadId}");
+            Interlocked.Decrement(ref _runningRequests);
+
+            return Ok("Tarefa síncrona finalizada.");
+        }
+
+        [HttpGet("async-task")]
+        public async Task<IActionResult> AsyncTask()
+        {
+            Interlocked.Increment(ref _runningRequests);
+            Console.WriteLine($"[ASYNC TASK] Requisições simultâneas em execução: {_runningRequests} - Thread {Thread.CurrentThread.ManagedThreadId}");
+
+            await Task.Delay(3000);
+
+            Console.WriteLine($"[ASYNC TASK] Finalizando requisição - Thread {Thread.CurrentThread.ManagedThreadId}");
+            Interlocked.Decrement(ref _runningRequests);
+
+            return Ok("Tarefa assíncrona finalizada.");
         }
     }
 }

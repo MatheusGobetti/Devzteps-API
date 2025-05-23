@@ -22,6 +22,14 @@ builder.Services.AddInfrastructureServices(connectionString);
 // Adiciona os serviços do FluentMigrator de forma limpa
 builder.Services.AddDatabaseMigrations(builder.Configuration);
 
+builder.Logging.ClearProviders(); // Remove os providers padrões
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Warning); // Silencia "info" e "debug"
+
+ThreadPool.SetMinThreads(100, 100);
+ThreadPool.GetMinThreads(out var worker, out var io);
+Console.WriteLine($"[ThreadPool] Min threads: {worker}, IO threads: {io}");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
