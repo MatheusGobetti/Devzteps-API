@@ -1,4 +1,4 @@
-﻿namespace Devzteps_API.Application.DTO
+﻿namespace Devzteps_API.Application.DTO.Todo
 {
     public class TodoCreateItemDTO
     {

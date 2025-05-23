@@ -1,8 +1,8 @@
-﻿using Devzteps_API.Application.DTO;
-using Devzteps_API.Application.Interfaces.Todo;
+﻿using Devzteps_API.Application.Interfaces.Todo;
 using Devzteps_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using Devzteps_API.Application.DTO.Todo;
 
 namespace Devzteps_API.Controllers
 {

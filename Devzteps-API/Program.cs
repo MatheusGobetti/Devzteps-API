@@ -3,6 +3,9 @@ using Devzteps_API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Connection string (você pode pegar do appsettings.json)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -12,7 +15,7 @@ builder.Services.AddSwaggerGen();
 
 // Adicionar injeções organizadas por camada
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices();
+builder.Services.AddInfrastructureServices(connectionString);
 
 var app = builder.Build();
 
