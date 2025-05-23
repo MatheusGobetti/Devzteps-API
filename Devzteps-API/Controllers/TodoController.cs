@@ -42,9 +42,9 @@ namespace Devzteps_API.Controllers
             var entity = _mapper.Map<TodoItem>(dto);
             var created = await _todoService.CreateAsync(entity);
 
-            var resultDto = _mapper.Map<TodoCreateItemDTO>(created);
+            var resultDto = _mapper.Map<TodoReadItemDTO>(created);
+
             return CreatedAtAction(nameof(Get), new { id = resultDto.Id }, resultDto);
         }
-
     }
 }

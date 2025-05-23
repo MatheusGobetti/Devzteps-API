@@ -8,8 +8,11 @@ namespace Devzteps_API.Application.Mapping
     {
         public TodoMappingProfile()
         {
+            // Mapeamento bidirecional para criação (DTO <-> Entidade)
             CreateMap<TodoItem, TodoCreateItemDTO>().ReverseMap();
-            // ReverseMap cria mapeamento dos dois lados
+
+            // Mapear leitura (Entidade -> DTO)
+            CreateMap<TodoItem, TodoReadItemDTO>();
         }
     }
 }

@@ -5,27 +5,27 @@ namespace Devzteps_API.Application.Services.Todo
 {
     public class TodoService : ITodoService
     {
-        private readonly ITodoRepository _repository;
+        private readonly ITodoRepository _todoRepository;
 
-        public TodoService(ITodoRepository repository)
+        public TodoService(ITodoRepository todoRepository)
         {
-            _repository = repository;
+            _todoRepository = todoRepository;
         }
 
         public async Task<IEnumerable<TodoItem>> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            return await _todoRepository.GetAllAsync();
         }
 
         public async Task<TodoItem?> GetByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            return await _todoRepository.GetByIdAsync(id);
         }
 
         public async Task<TodoItem> CreateAsync(TodoItem item)
         {
             // Aqui você pode adicionar validações, regras de negócio etc
-            return await _repository.AddAsync(item);
+            return await _todoRepository.AddAsync(item);
         }
     }
 }

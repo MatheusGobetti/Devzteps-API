@@ -1,5 +1,7 @@
 using Devzteps_API.Application;
 using Devzteps_API.Infrastructure;
+using Devzteps_API.Infrastructure.Extensions;
+using FluentMigrator.Runner;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(connectionString);
 
+// Adiciona os serviços do FluentMigrator de forma limpa
+builder.Services.AddDatabaseMigrations(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +30,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.RunMigrations();
 
 app.UseHttpsRedirection();
 
