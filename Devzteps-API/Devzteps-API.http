@@ -1,0 +1,6 @@
+@Devzteps_API_HostAddress = http://localhost:5023
+
+GET {{Devzteps_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
