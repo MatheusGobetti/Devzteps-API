@@ -1,8 +1,10 @@
-﻿using Devzteps_API.Application.Interfaces.Todo;
+﻿using AutoMapper;
+using Devzteps_API.Application.DTO.Todo;
+using Devzteps_API.Application.Interfaces.Todo;
 using Devzteps_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using Devzteps_API.Application.DTO.Todo;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Devzteps_API.Controllers
 {
@@ -13,6 +15,9 @@ namespace Devzteps_API.Controllers
         private readonly ITodoService _todoService;
         private readonly IMapper _mapper;
         private static int _runningRequests = 0;
+
+        private const int TaskCount = 180;
+        private const int TaskDurationMs = 1000;
 
         public TodoController(ITodoService todoService, IMapper mapper)
         {
@@ -49,6 +54,65 @@ namespace Devzteps_API.Controllers
         }
 
         // ------------------------------------------------------- Endpoints para Threads e Paralelismo -------------------------
+
+        private void SimulateWork()
+        {
+            Thread.Sleep(TaskDurationMs);
+        }
+
+        [HttpGet("sync-work")]
+        public IActionResult SyncWork()
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            var threadIds = new HashSet<int>();
+
+            for (int i = 0; i < TaskCount; i++)
+            {
+                threadIds.Add(Thread.CurrentThread.ManagedThreadId);
+                SimulateWork();
+            }
+
+            stopwatch.Stop();
+            return Ok(new
+            {
+                Mode = "Synchronous",
+                stopwatch.ElapsedMilliseconds,
+                ThreadsUsed = threadIds.Count,
+                ThreadIds = threadIds.OrderBy(id => id)
+            });
+        }
+
+        [HttpGet("parallel-work")]
+        public async Task<IActionResult> ParallelWork()
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            var threadIds = new ConcurrentBag<int>();
+            var tasks = new List<Task>();
+
+            for (int i = 0; i < TaskCount; i++)
+            {
+                tasks.Add(Task.Run(() =>
+                {
+                    // Captura a thread utilizada
+                    threadIds.Add(Thread.CurrentThread.ManagedThreadId);
+                    SimulateWork();
+                }));
+            }
+
+            await Task.WhenAll(tasks);
+
+            stopwatch.Stop();
+
+            return Ok(new
+            {
+                Mode = "Parallel",
+                stopwatch.ElapsedMilliseconds,
+                ThreadsUsed = threadIds.Distinct().Count(),
+                ThreadIds = threadIds.Distinct().OrderBy(id => id)
+            });
+        }
 
         [HttpGet("sync-task")]
         public IActionResult SyncTask()
